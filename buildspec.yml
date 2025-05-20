@@ -1,22 +1,22 @@
+
 version: 0.2
 
 phases:
-  pre_build:
+  install:
+    runtime-versions:
+      docker: 20
     commands:
       - echo Logging in to Amazon ECR...
-      - aws ecr get-login-password | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 355687610926.dkr.ecr.us-east-1.amazonaws.com
+
   build:
     commands:
       - echo Building Docker image...
       - docker build -t html-demo .
-      - docker tag html-demo:latest $REPO_URI:latest
+      - docker tag html-demo:latest 355687610926.dkr.ecr.us-east-1.amazonaws.com/html-demo:latest
+
   post_build:
     commands:
-      - echo Pushing Docker image to ECR...
-      - docker push $REPO_URI:latest
-      - echo Done.
-env:
-  variables:
-    AWS_REGION: us-east-1
-    REPO_URI: 355687610926.dkr.ecr.us-east-1.amazonaws.com/html-demo
-    AWS_ACCOUNT_ID: 355687610926
+      - echo Pushing image to ECR...
+      - docker push 355687610926.dkr.ecr.us-east-1.amazonaws.com/html-demo:latest
+      - echo Done
